@@ -162,6 +162,10 @@ def init_eos(username, password):
    capture_screenshot_and_upload(
             driver, "login-page.png"
         )
+   
+   element_to_remove = driver.find_element(By.XPATH, "/html/body/div[3]")
+   driver.execute_script("arguments[0].parentNode.removeChild(arguments[0]);", element_to_remove)
+   print("Obstructing element removed.")
     
    # Submit the form
    login_button = driver.find_element(By.XPATH, "/html/body/div[2]/div/div/div/form/div[2]/input")
