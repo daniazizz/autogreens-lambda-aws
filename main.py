@@ -204,11 +204,17 @@ def run_eos(username, password, sheet):
 
 
 
-# SHEET WITH NAME "MARKET" AND "EXPRESS"
-sheet_market = client.open('PRIX-GREENYARD').get_worksheet(0)
-run_eos(GY_USERNAME_MARKET, GY_PASSWORD_MARKET, sheet_market)
-# sheet_express.sort((PRIJS_VERSHIL_COL, 'des'))
 
+
+def handler(event, context):
+    # SHEET WITH NAME "MARKET" AND "EXPRESS"
+    sheet_market = client.open('PRIX-GREENYARD').get_worksheet(0)
+    run_eos(GY_USERNAME_MARKET, GY_PASSWORD_MARKET, sheet_market)
+    # sheet_express.sort((PRIJS_VERSHIL_COL, 'des'))
+    return {
+        "statusCode": 200,
+        "body": "OK"
+    }
 
 
 
