@@ -30,12 +30,12 @@ def get_google_credentials():
     # Retrieve the secret
     response = client.get_secret_value(SecretId=secret_name)
     
-    # Parse the JSON credentials
+    # Parse the JSON credentials and create credentials object
     secret_json = json.loads(response["SecretString"])
     credentials = service_account.Credentials.from_service_account_info(secret_json)
     return credentials
 
-# Fetch Google API credentials JSON from AWS Secrets Manager
+# Fetch custom configuration from AWS Secrets Manager
 def get_autogreens_config():
     secret_name = "autogreens-config"  # Name of your secret in Secrets Manager
     region_name = "eu-west-3"  # AWS region of the Secrets Manager
@@ -43,19 +43,13 @@ def get_autogreens_config():
     # Create a Secrets Manager client
     client = boto3.client("secretsmanager", region_name=region_name)
     
-    # Retrieve the secret
+    # Retrieve and parse the secret
     response = client.get_secret_value(SecretId=secret_name)
-    
-    # Parse the JSON credentials
-    secret_json = json.loads(response["SecretString"])
-    credentials = service_account.Credentials.from_service_account_info(secret_json)
-    return credentials
+    config = json.loads(response["SecretString"])  # Assuming this is a JSON object
+    return config
 
-
-creds = Credentials.from_service_account_file(get_google_credentials())
-
-
-# Define the scope
+# Retrieve Google API credentials and apply scopes
+creds = get_google_credentials()
 scope = [
    'https://spreadsheets.google.com/feeds',
    'https://www.googleapis.com/auth/spreadsheets',
@@ -64,16 +58,10 @@ scope = [
 ]
 creds = creds.with_scopes(scope)
 
-
 # Authorize the client
 client = gspread.authorize(creds)
 
-
-
-
-
-# Higher order functions, taking sheet as an argument
-
+# Higher-order functions for Google Sheets operations
 def create_row(sheet, data):
    sheet.append_row(data)
 
@@ -85,19 +73,15 @@ def update_cell(sheet, row, col, new_value):
 
 def delete_row(sheet, row):
     sheet.delete_rows(row)
-  
 
+# Constants for column indexes
 GREENYARD_PRICE_COL = 4
 VP_COL = 7
 MARGE_COL = 8
 LAST_UPDATE_COL = 9
 
-
-import json
-
-
-
-config = json.load(get_autogreens_config())
+# Load configuration
+config = get_autogreens_config()
 
 
 # Access the parameters
