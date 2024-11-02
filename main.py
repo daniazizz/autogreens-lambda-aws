@@ -144,7 +144,8 @@ def init_eos(username, password):
    human_sleep(1, 3)
    print("Password entered")
 
-
+   print(driver.page_source)  # This will print the full HTML of the current page
+    
    # Submit the form
    login_button = driver.find_element(By.XPATH, "/html/body/div[2]/div/div/div/form/div[2]/input")
    ActionChains(driver).move_to_element(login_button).click().perform()
@@ -176,6 +177,7 @@ def run_eos(username, password, sheet):
         # Step 2: Navigate to the desired page
         driver.get(f"https://eos.firstinfresh.be/shop/item/{e.get('GY-REF')}")
         human_sleep(2, 4)
+        print(driver.page_source)  # This will print the full HTML of the current page
 
 
         # Step 3: Scrape the required information
