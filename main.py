@@ -85,7 +85,6 @@ config = get_autogreens_config()
 
 
 # Access the parameters
-BROWSER_DRIVER_PATH = config.get('browser_driver_path')
 GY_USERNAME_MARKET = config.get('gy_username_market')
 GY_PASSWORD_MARKET = config.get('gy_password_market')
 
@@ -125,6 +124,7 @@ def init_eos(username, password):
    # Step 1: Log in to the website
    driver.get("https://eos.firstinfresh.be/login")
    human_sleep(2, 4)
+   print(username, password)
 
 
    # Enter username
@@ -133,6 +133,7 @@ def init_eos(username, password):
    human_sleep(1, 2)
    username_input.send_keys(username)  # Replace with your username
    human_sleep(1, 3)
+   print("Username entered")
 
 
    # Enter password
@@ -141,12 +142,14 @@ def init_eos(username, password):
    human_sleep(1, 2)
    password_input.send_keys(password)  # Replace with your password
    human_sleep(1, 3)
+   print("Password entered")
 
 
    # Submit the form
    login_button = driver.find_element(By.XPATH, "/html/body/div[2]/div/div/div/form/div[2]/input")
    ActionChains(driver).move_to_element(login_button).click().perform()
    human_sleep(3, 5)
+   print("Logged in successfully")
   
    return driver
 
