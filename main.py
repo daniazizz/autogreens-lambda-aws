@@ -19,6 +19,20 @@ import boto3
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
+# Initialize S3 client
+s3_client = boto3.client("s3")
+# Function to take a screenshot and upload it to S3
+def capture_screenshot_and_upload(driver, file_name):
+    bucket_name = "autogreens-debug"
+    screenshot = driver.get_screenshot_as_png()  # Capture screenshot as binary data
+    s3_client.put_object(
+        Bucket=bucket_name,
+        Key=file_name,
+        Body=screenshot,
+        ContentType="image/png"
+    )
+    print(f"Screenshot saved to s3://{bucket_name}/{file_name}")
+
 # Fetch Google API credentials JSON from AWS Secrets Manager
 def get_google_credentials():
     secret_name = "my-google-api-credentials"  # Name of your secret in Secrets Manager
@@ -102,7 +116,7 @@ options.add_argument("--headless=new")
 options.add_argument('--no-sandbox')
 options.add_argument("--disable-gpu")
 options.add_argument("--window-size=1280x1696")
-# options.add_argument("--single-process")
+options.add_argument("--single-process")
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--disable-dev-tools")
 options.add_argument("--no-zygote")
@@ -145,6 +159,9 @@ def init_eos(username, password):
    print("Password entered")
 
    print(driver.page_source)  # This will print the full HTML of the current page
+   capture_screenshot_and_upload(
+            driver, "login-page.png"
+        )
     
    # Submit the form
    login_button = driver.find_element(By.XPATH, "/html/body/div[2]/div/div/div/form/div[2]/input")
@@ -170,6 +187,9 @@ def extract_price(input_string):
 
 def run_eos(username, password, sheet):
     driver = init_eos(username, password)
+    capture_screenshot_and_upload(
+            driver, "after-init.png"
+        )
     data = read_data(sheet)
     i = 2
     for e in data:
@@ -178,6 +198,9 @@ def run_eos(username, password, sheet):
         driver.get(f"https://eos.firstinfresh.be/shop/item/{e.get('GY-REF')}")
         human_sleep(2, 4)
         print(driver.page_source)  # This will print the full HTML of the current page
+        capture_screenshot_and_upload(
+            driver, f"item-{e.get('GY-REF')}.png"
+        )
 
 
         # Step 3: Scrape the required information
