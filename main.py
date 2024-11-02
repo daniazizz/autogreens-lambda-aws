@@ -102,7 +102,7 @@ options.add_argument("--headless=new")
 options.add_argument('--no-sandbox')
 options.add_argument("--disable-gpu")
 options.add_argument("--window-size=1280x1696")
-options.add_argument("--single-process")
+# options.add_argument("--single-process")
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--disable-dev-tools")
 options.add_argument("--no-zygote")
@@ -123,25 +123,25 @@ def init_eos(username, password):
 
    # Step 1: Log in to the website
    driver.get("https://eos.firstinfresh.be/login")
-   human_sleep(2, 4)
+   human_sleep(4, 6)
    print(username, password)
 
 
    # Enter username
    username_input = driver.find_element(By.XPATH, "/html/body/div[2]/div/div/div/form/div[1]/div[1]/input")
    ActionChains(driver).move_to_element(username_input).click().perform()
-   human_sleep(1, 2)
+   human_sleep(2, 3)
    username_input.send_keys(username)  # Replace with your username
-   human_sleep(1, 3)
+   human_sleep(2, 3)
    print("Username entered")
 
 
    # Enter password
    password_input = driver.find_element(By.XPATH, "/html/body/div[2]/div/div/div/form/div[1]/div[2]/input")
    ActionChains(driver).move_to_element(password_input).click().perform()
-   human_sleep(1, 2)
+   human_sleep(2, 3)
    password_input.send_keys(password)  # Replace with your password
-   human_sleep(1, 3)
+   human_sleep(2, 3)
    print("Password entered")
 
    print(driver.page_source)  # This will print the full HTML of the current page
