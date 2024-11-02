@@ -21,8 +21,16 @@ from googleapiclient.discovery import build
 
 # Initialize S3 client
 s3_client = boto3.client("s3")
+
+
+import os
+
+DEBUG = os.getenv("DEBUG")
+
 # Function to take a screenshot and upload it to S3
 def capture_screenshot_and_upload(driver, file_name):
+    if not DEBUG:
+        return
     bucket_name = "autogreens-debug"
     screenshot = driver.get_screenshot_as_png()  # Capture screenshot as binary data
     s3_client.put_object(
@@ -115,7 +123,8 @@ options.binary_location = '/opt/chrome/chrome'
 options.add_argument("--headless=new")
 options.add_argument('--no-sandbox')
 options.add_argument("--disable-gpu")
-options.add_argument("--window-size=1920x1080")  # Full HD resolution
+#small screen to save memory selenium
+options.add_argument("--window-size=800,600")
 options.add_argument("--single-process")
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--disable-dev-tools")
@@ -123,23 +132,18 @@ options.add_argument("--no-zygote")
 options.add_argument(f"--user-data-dir={mkdtemp()}")
 options.add_argument(f"--data-path={mkdtemp()}")
 options.add_argument(f"--disk-cache-dir={mkdtemp()}")
-options.add_argument("--remote-debugging-port=9222")
+# options.add_argument("--remote-debugging-port=9222")
 
 
 def init_eos(username, password):
-
-
+    # Initialize the Chrome driver
    service = webdriver.ChromeService("/opt/chromedriver")
    driver = webdriver.Chrome(options=options, service=service)
-
-
-
 
    # Step 1: Log in to the website
    driver.get("https://eos.firstinfresh.be/login")
    human_sleep(4, 6)
    print(username, password)
-
 
    # Enter username
    username_input = driver.find_element(By.XPATH, "/html/body/div[2]/div/div/div/form/div[1]/div[1]/input")
@@ -148,7 +152,6 @@ def init_eos(username, password):
    username_input.send_keys(username)  # Replace with your username
    human_sleep(2, 3)
    print("Username entered")
-
 
    # Enter password
    password_input = driver.find_element(By.XPATH, "/html/body/div[2]/div/div/div/form/div[1]/div[2]/input")
